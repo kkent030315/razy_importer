@@ -1,4 +1,6 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkkent030315%2Frazy_importer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkkent030315%2Frazy_importer?ref=badge_shield)
+![crates.io](https://img.shields.io/crates/v/razy-importer.svg?label=crates.io:razy-importer)
+![crates.io](https://img.shields.io/crates/v/razy-importer-macros.svg?label=crates.io:razy-importer-macros)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkkent030315%2Frazy_importer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkkent030315%2Frazy_importer?ref=badge_large)
 
