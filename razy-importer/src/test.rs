@@ -35,6 +35,8 @@ speculate! {
                 assert_eq_hex!(base, dll_base);
                 let addr = crate::get_export(base, gen_ohp(func_name), false);
                 assert_eq_hex!(addr, func_addr);
+                let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
+                assert_eq_hex!(addr, func_addr);
             };
         }
 

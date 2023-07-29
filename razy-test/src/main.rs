@@ -11,7 +11,7 @@ use winapi::shared::minwindef::DWORD;
 #[export_name = "nt"]
 fn nt() -> u32 {
     let NtGetCurrentProcessorNumber: unsafe extern "system" fn() -> ULONG =
-        ri_fn!("NtGetCurrentProcessorNumber", ri_mod!("ntdll.dll"));
+        ri_fn!("NtGetCurrentProcessorNumber");
     return unsafe { NtGetCurrentProcessorNumber() };
 }
 
@@ -20,7 +20,7 @@ fn nt() -> u32 {
 #[export_name = "k32"]
 fn k32() -> u32 {
     let GetCurrentProcessorNumber: unsafe extern "system" fn() -> DWORD =
-        ri_fn!("GetCurrentProcessorNumber", ri_mod!("kernel32.dll"));
+        ri_fn!("GetCurrentProcessorNumber");
     return unsafe { GetCurrentProcessorNumber() };
 }
 

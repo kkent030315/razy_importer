@@ -70,12 +70,12 @@ pub fn ri_mod(input: TokenStream) -> TokenStream {
     return expanded;
 }
 
-struct RiFnInput {
+struct RiFnMInput {
     function: LitStr,
     module_expr: Expr,
 }
 
-impl Parse for RiFnInput {
+impl Parse for RiFnMInput {
     fn parse(input: ParseStream) -> syn::parse::Result<Self> {
         let function: LitStr = input.parse()?;
         let _: syn::token::Comma = input.parse()?;
@@ -88,8 +88,8 @@ impl Parse for RiFnInput {
 }
 
 #[proc_macro]
-pub fn ri_fn(input: TokenStream) -> TokenStream {
-    let input_struct: RiFnInput = parse_macro_input!(input as RiFnInput);
+pub fn ri_fn_m(input: TokenStream) -> TokenStream {
+    let input_struct: RiFnMInput = parse_macro_input!(input as RiFnMInput);
     let function: LitStr = input_struct.function;
     let module_expr: Expr = input_struct.module_expr;
     let expanded: TokenStream = quote! {
@@ -97,6 +97,22 @@ pub fn ri_fn(input: TokenStream) -> TokenStream {
             std::mem::transmute(razy_importer::get_export(
                 #module_expr,
                 ri_khash!(#function),
+                false,
+            ))
+        }
+    }
+    .into();
+    return expanded;
+}
+
+#[proc_macro]
+pub fn ri_fn(input: TokenStream) -> TokenStream {
+    let function_name: LitStr = parse_macro_input!(input as LitStr);
+    let function_name_str: String = function_name.value();
+    let expanded: TokenStream = quote! {
+        unsafe {
+            std::mem::transmute(razy_importer::get_export_forwarded(
+                ri_khash!(#function_name_str),
                 false,
             ))
         }
