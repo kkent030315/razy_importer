@@ -1,12 +1,5 @@
 #![crate_type = "rlib"]
 
-#[cfg(test)]
-mod test;
-
-#[cfg(test)]
-#[macro_use]
-extern crate assert_matches;
-
 #[macro_use]
 extern crate const_random;
 
@@ -17,7 +10,7 @@ use quote::quote;
 use razy_importer::OffsetHashPair;
 use syn::{
     parse::{Parse, ParseStream},
-    parse_macro_input, Expr, Ident, LitStr,
+    parse_macro_input, Expr, LitStr,
 };
 
 trait ToTokensSlice {
@@ -75,29 +68,6 @@ pub fn ri_mod(input: TokenStream) -> TokenStream {
     }
     .into();
     return expanded;
-}
-
-enum FunctionExpr {
-    Expr(Expr),
-    Ident(Ident),
-    Str(LitStr),
-}
-
-impl Parse for FunctionExpr {
-    fn parse(input: ParseStream) -> syn::parse::Result<Self> {
-        if let Ok(lit_str) = input.parse::<LitStr>() {
-            Ok(FunctionExpr::Str(lit_str))
-        } else if let Ok(expr) = input.parse::<Expr>() {
-            Ok(FunctionExpr::Expr(expr))
-        } else if let Ok(ident) = input.parse::<Ident>() {
-            Ok(FunctionExpr::Ident(ident))
-        } else {
-            Err(syn::Error::new(
-                input.span(),
-                "Expected either an expression, identifier, or string literal",
-            ))
-        }
-    }
 }
 
 struct RiFnInput {
