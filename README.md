@@ -4,7 +4,7 @@
 
 # razy_importer
 
-Rust implementation of [lazy_importer](https://github.com/JustasMasiulis/lazy_importer), hiding imports from IAT
+Rust implementation of [lazy_importer](https://github.com/JustasMasiulis/lazy_importer)
 
 # Usage
 
