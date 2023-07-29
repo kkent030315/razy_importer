@@ -1,0 +1,12 @@
+{
+  "prettier.singleQuote": true,
+  "prettier.bracketSameLine": true,
+  "files.insertFinalNewline": true,
+  "[rust]": {
+    "editor.defaultFormatter": "statiolake.vscode-rustfmt"
+  },
+  "rust-analyzer.linkedProjects": [
+    "./razy-importer/Cargo.toml",
+    "./razy-importer-macros/Cargo.toml"
+  ]
+}

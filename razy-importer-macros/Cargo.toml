@@ -1,0 +1,22 @@
+[package]
+name        = "razy-importer-macros"
+description = "Proc macros for razy-importer"
+version     = "0.1.0"
+edition     = "2021"
+
+[lib]
+proc-macro = true
+
+[dev-dependencies]
+ntapi = "0.4.1"
+
+[dependencies]
+proc-macro2   = "1.0.36"
+const-random  = "0.1.15"
+syn           = { version = "1.0.91", features = ["full", "extra-traits"] }
+quote         = "1.0.17"
+razy-importer = { version = "*", path = "../razy-importer" }
+
+[[example]]
+name = "general-purpose"
+path = "../examples/general-purpose/main.rs"

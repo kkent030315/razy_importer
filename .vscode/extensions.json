@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "rust-lang.rust-analyzer",
+    "statiolake.vscode-rustfmt",
+    "tamasfe.even-better-toml",
+    "github.vscode-github-actions"
+  ]
+}

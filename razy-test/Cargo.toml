@@ -1,0 +1,16 @@
+[package]
+publish              = false
+name                 = "razy-test"
+version              = "0.1.0"
+authors.workspace    = true
+repository.workspace = true
+keywords.workspace   = true
+license.workspace    = true
+edition.workspace    = true
+readme.workspace     = true
+
+[dependencies]
+ntapi                = "0.4.1"
+winapi               = { version = "0.3", features = ["libloaderapi"] }
+razy-importer        = { version = "*", path = "../razy-importer" }
+razy-importer-macros = { version = "*", path = "../razy-importer-macros" }
