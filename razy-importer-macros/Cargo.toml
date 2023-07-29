@@ -2,6 +2,7 @@
 name        = "razy-importer-macros"
 description = "Proc macros for razy-importer"
 version     = "0.1.0"
+readme      = "../README.MD"
 edition     = { workspace = true }
 license     = { workspace = true }
 repository  = { workspace = true }
