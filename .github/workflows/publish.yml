@@ -1,0 +1,53 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_razy_importer:
+        type: boolean
+        description: 'Publish razy-importer'
+        required: false
+      publish_razy_importer_macros:
+        type: boolean
+        description: 'Publish razy-importer-macros'
+        required: false
+
+env:
+  RUST_CACHE_GUID: '12819416-15ec-4b87-8b0e-53904c15b18d'
+
+jobs:
+  publish:
+    name: Publish
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        rust_toolchain: [stable]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install rust nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust_toolchain }}
+          components: rust-src
+          override: true
+
+      - name: cache rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            ./razy-importer -> target
+            ./razy-importer-macros -> target
+          shared-key: ${{ env.RUST_CACHE_GUID }}
+
+      - name: publish razy-importer
+        if: ${{ inputs.publish_razy_importer }}
+        run: cargo publish -p razy-importer
+
+      - name: publish razy-importer-macros
+        if: ${{ inputs.publish_razy_importer_macros }}
+        run: cargo publish -p razy-importer-macros
