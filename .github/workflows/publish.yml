@@ -45,13 +45,9 @@ jobs:
           shared-key: ${{ env.RUST_CACHE_GUID }}
 
       - name: publish razy-importer
-        env:
-          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
         if: ${{ inputs.publish_razy_importer }}
-        run: cargo publish -p razy-importer
+        run: cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer
 
       - name: publish razy-importer-macros
-        env:
-          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
         if: ${{ inputs.publish_razy_importer_macros }}
-        run: cargo publish -p razy-importer-macros
+        run: cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer-macros
