@@ -165,7 +165,7 @@ jobs:
             <summary>Publish</summary>
 
             ```
-            ${{ steps.cargo_publish_escaped_r.outputs.uncolored }}
+            ${{ steps.cargo_publish_r.outputs.stdout }}
             ```
 
             </details>
@@ -194,7 +194,7 @@ jobs:
             <summary>Publish</summary>
 
             ```
-            ${{ steps.cargo_publish_escaped_rm.outputs.uncolored }}
+            ${{ steps.cargo_publish_rm.outputs.stdout }}
             ```
 
             </details>
