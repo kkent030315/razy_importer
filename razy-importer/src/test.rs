@@ -25,12 +25,19 @@ speculate! {
             return hash;
         }
 
-        fn check(dll_name: &str, func_name: &str) {
+        fn check_ex(dll_name: &str, func_name: &str) -> (u64, u64) {
             unsafe {
                 let dll_name_c: CString = CString::new(dll_name).unwrap();
                 let dll_base: u64 = GetModuleHandleA(dll_name_c.as_ptr()) as _;
                 let func_name_c: CString = CString::new(func_name).unwrap();
                 let func_addr: u64 = GetProcAddress(dll_base as _, func_name_c.as_ptr()) as _;
+                return (dll_base, func_addr);
+            }
+        }
+
+        fn check(dll_name: &str, func_name: &str) {
+            unsafe {
+                let (dll_base, func_addr) = check_ex(dll_name, func_name);
                 let base = crate::get_module_base(gen_ohp(dll_name), false);
                 assert_eq_hex!(base, dll_base);
                 let addr = crate::get_export(base, gen_ohp(func_name), false);
@@ -40,13 +47,20 @@ speculate! {
             };
         }
 
+        fn check_forward(func_name: &str) {
+            unsafe {
+                let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
+                assert_ne_hex!(addr, 0);
+            }
+        }
+
         #[allow(dead_code)]
         fn load_lib(dll_name: &str) {
             let dll_name_c: CString = CString::new(dll_name).unwrap();
             unsafe { LoadLibraryA(dll_name_c.as_ptr()) };
         }
 
-        it "check_ntdll" {
+        it "check ntdll" {
             // non-forwarded
             check("ntdll.dll", "NtGetCurrentProcessorNumber");
             check("ntdll.dll", "NtGetCurrentProcessorNumberEx");
@@ -66,7 +80,26 @@ speculate! {
             check("ntdll.dll", "ZwOpenThreadTokenEx");
         }
 
-        it "check_kernel32" {
+        it "check_forward ntdll" {
+            check_forward("NtGetCurrentProcessorNumber");
+            check_forward("NtGetCurrentProcessorNumberEx");
+            check_forward("ZwGetCurrentProcessorNumber");
+            check_forward("ZwGetCurrentProcessorNumberEx");
+            check_forward("NtOpenProcess");
+            check_forward("NtOpenProcessToken");
+            check_forward("NtOpenProcessTokenEx");
+            check_forward("ZwOpenProcess");
+            check_forward("ZwOpenProcessToken");
+            check_forward("ZwOpenProcessTokenEx");
+            check_forward("NtOpenThread");
+            check_forward("NtOpenThreadToken");
+            check_forward("NtOpenThreadTokenEx");
+            check_forward("ZwOpenThread");
+            check_forward("ZwOpenThreadToken");
+            check_forward("ZwOpenThreadTokenEx");
+        }
+
+        it "check kernel32" {
             // includes forwarded hashes
             check("kernel32.dll", "OpenProcess");
             check("kernel32.dll", "OpenThread");
@@ -78,6 +111,40 @@ speculate! {
             check("kernel32.dll", "GetCurrentActCtx");
             check("kernel32.dll", "GetCurrentActCtxWorker");
             check("kernel32.dll", "GetCurrentApplicationUserModelId");
+        }
+
+        it "check_forward kernel32" {
+            check_forward("OpenProcess");
+            check_forward("OpenThread");
+            check_forward("GetCurrentProcess");
+            check_forward("GetCurrentProcessId");
+            check_forward("GetCurrentThread");
+            check_forward("GetCurrentThreadId");
+            check_forward("GetCurrentUmsThread");
+            check_forward("GetCurrentActCtx");
+            check_forward("GetCurrentActCtxWorker");
+            check_forward("GetCurrentApplicationUserModelId");
+        }
+
+        it "check should not throw" {
+            unsafe {
+                let dll_name: &str = "ntdll.dll";
+                let base = crate::get_module_base(gen_ohp(dll_name), false);
+                let func_name: &str = "NonExistentAPINameShouldNotThrowException";
+                let addr = crate::get_export(base, gen_ohp(func_name), false);
+                assert_eq_hex!(addr, 0);
+                // This throws exception, as intended.
+                // let addr = crate::get_export(0, gen_ohp(func_name), false);
+                // assert_eq_hex!(addr, 0);
+            }
+        }
+
+        it "check_forward should not throw" {
+            unsafe {
+                let func_name: &str = "NonExistentAPINameShouldNotThrowException";
+                let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
+                assert_eq_hex!(addr, 0);
+            }
         }
     }
 }
