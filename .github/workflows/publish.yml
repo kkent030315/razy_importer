@@ -19,6 +19,8 @@ jobs:
   publish:
     name: Publish
 
+    if: ${{ inputs.publish_razy_importer || inputs.publish_razy_importer_macros }}
+
     strategy:
       matrix:
         os: [windows-latest]
@@ -28,6 +30,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: install rust
         uses: actions-rs/toolchain@v1
@@ -44,10 +48,156 @@ jobs:
             ./razy-importer-macros -> target
           shared-key: ${{ env.RUST_CACHE_GUID }}
 
+      - name: install cargo-audit
+        run: cargo install cargo-audit
+
+      - name: cargo audit
+        if: ${{ inputs.publish_razy_importer }}
+        uses: gh640/command-result-action@v1
+        id: cargo_audit_r
+        with:
+          command: 'cargo audit'
+          cwd: './razy-importer'
+
+      - name: cargo audit
+        if: ${{ inputs.publish_razy_importer_macros }}
+        uses: gh640/command-result-action@v1
+        id: cargo_audit_rm
+        with:
+          command: 'cargo audit'
+          cwd: './razy-importer-macros'
+
+      - name: remove ansi color escape sequences
+        if: ${{ inputs.publish_razy_importer }}
+        uses: marcransome/remove-ansi-colors@v1
+        id: cargo_audit_escaped_r
+        with:
+          colored: ${{ steps.cargo_audit_r.outputs.stdout }}
+
+      - name: remove ansi color escape sequences
+        if: ${{ inputs.publish_razy_importer_macros }}
+        uses: marcransome/remove-ansi-colors@v1
+        id: cargo_audit_escaped_rm
+        with:
+          colored: ${{ steps.cargo_audit_rm.outputs.stdout }}
+
       - name: publish razy-importer
         if: ${{ inputs.publish_razy_importer }}
-        run: cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer
+        uses: gh640/command-result-action@v1
+        id: cargo_publish_r
+        with:
+          command: 'cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer'
 
-      - name: publish razy-importer-macros
+      - name: publish razy-importer
         if: ${{ inputs.publish_razy_importer_macros }}
-        run: cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer-macros
+        uses: gh640/command-result-action@v1
+        id: cargo_publish_rm
+        with:
+          command: 'cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer-macros'
+
+      - name: remove ansi color escape sequences
+        if: ${{ inputs.publish_razy_importer }}
+        uses: marcransome/remove-ansi-colors@v1
+        id: cargo_publish_escaped_r
+        with:
+          colored: ${{ steps.cargo_publish_r.outputs.stdout }}
+
+      - name: remove ansi color escape sequences
+        if: ${{ inputs.publish_razy_importer_macros }}
+        uses: marcransome/remove-ansi-colors@v1
+        id: cargo_publish_escaped_rm
+        with:
+          colored: ${{ steps.cargo_publish_rm.outputs.stdout }}
+
+      - name: lookup release version
+        if: ${{ inputs.publish_razy_importer }}
+        id: version_r
+        uses: thebongy/version-check@v1
+        with:
+          file: './razy-importer/Cargo.toml'
+          tagFormat: 'razy-importer-v${version}'
+
+      - name: lookup release version
+        if: ${{ inputs.publish_razy_importer_macros }}
+        id: version_rm
+        uses: thebongy/version-check@v1
+        with:
+          file: './razy-importer-macros/Cargo.toml'
+          tagFormat: 'razy-importer-macros-v${version}'
+
+      - name: tag action
+        if: ${{ inputs.publish_razy_importer }}
+        id: tag_r
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          custom_tag: '${{ steps.version_r.outputs.releaseVersion }}'
+
+      - name: tag action
+        if: ${{ inputs.publish_razy_importer_macros }}
+        id: tag_rm
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          custom_tag: '${{ steps.version_rm.outputs.releaseVersion }}'
+
+      - name: push tag
+        run: git push origin --tags
+
+      - name: create release
+        if: ${{ inputs.publish_razy_importer }}
+        id: release_r
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            ${{ steps.tag_r.outputs.changelog }}
+
+            <details>
+            <summary>Cargo Audit</summary>
+
+            ```
+            ${{ steps.cargo_audit_escaped_r.outputs.uncolored }}
+            ```
+
+            </details>
+
+            <details>
+            <summary>Publish</summary>
+
+            ```
+            ${{ steps.cargo_publish_escaped_r.outputs.uncolored }}
+            ```
+
+            </details>
+          tag_name: '${{ steps.version_r.outputs.releaseVersion }}'
+          draft: false
+          prerelease: false
+
+      - name: create release
+        if: ${{ inputs.publish_razy_importer_macros }}
+        id: release_rm
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            ${{ steps.tag_rm.outputs.changelog }}
+
+            <details>
+            <summary>Cargo Audit</summary>
+
+            ```
+            ${{ steps.cargo_audit_escaped_rm.outputs.uncolored }}
+            ```
+
+            </details>
+
+            <details>
+            <summary>Publish</summary>
+
+            ```
+            ${{ steps.cargo_publish_escaped_rm.outputs.uncolored }}
+            ```
+
+            </details>
+          tag_name: '${{ steps.version_rm.outputs.releaseVersion }}'
+          draft: false
+          prerelease: false
