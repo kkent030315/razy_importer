@@ -47,6 +47,16 @@ speculate! {
             };
         }
 
+        fn check_single(dll_name: &str, func_name: &str) {
+            unsafe {
+                let (dll_base, func_addr) = check_ex(dll_name, func_name);
+                let base = crate::get_module_base(gen_ohp(dll_name), false);
+                assert_eq_hex!(base, dll_base);
+                let addr = crate::get_export(base, gen_ohp(func_name), false);
+                assert_eq_hex!(addr, func_addr);
+            };
+        }
+
         fn check_forward(func_name: &str) {
             unsafe {
                 let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
@@ -57,7 +67,8 @@ speculate! {
         #[allow(dead_code)]
         fn load_lib(dll_name: &str) {
             let dll_name_c: CString = CString::new(dll_name).unwrap();
-            unsafe { LoadLibraryA(dll_name_c.as_ptr()) };
+            let handle: u64 = unsafe { LoadLibraryA(dll_name_c.as_ptr()) } as _;
+            assert_ne!(handle, 0);
         }
 
         it "check ntdll" {
@@ -124,6 +135,13 @@ speculate! {
             check_forward("GetCurrentActCtx");
             check_forward("GetCurrentActCtxWorker");
             check_forward("GetCurrentApplicationUserModelId");
+        }
+
+        it "check for cyclic forwarded imports" {
+            // load_lib("api-ms-win-core-processthreads-l1-1-1.dll");
+            check("kernel32.dll", "SetProcessMitigationPolicy");
+            check_single("kernel32.dll", "SetProcessMitigationPolicy");
+            check_forward("SetProcessMitigationPolicy");
         }
 
         it "check should not throw" {

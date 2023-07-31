@@ -28,9 +28,9 @@ fn main() {
 }
 ```
 
-# API Set DLLs are not supported
+# API Set DLLs is supported
 
-API Set DLLs are not supported (such as `SetProcessMitigationPolicy`).
+API Set DLLs is supported (such as `SetProcessMitigationPolicy`) since `>=0.2.0`.
 
 - Relation: `kernel32.dll` -> `api-ms-win-core-processthreads-l1-1-1.SetProcessMitigationPolicy`
 - Relation: `api-ms-win-core-processthreads-l1-1-1.dll` -> `kernel32.SetProcessMitigationPolicy`

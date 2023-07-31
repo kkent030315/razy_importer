@@ -183,7 +183,11 @@ pub unsafe fn get_export(base: u64, ohp: OffsetHashPair, case_sensitive: bool) -
         if entry_hash == get_hash(ohp) {
             let addr: u64 = get_export_addr(base, index as _);
             if is_forwarded(base, addr) {
-                return get_export_forwarded(ohp, case_sensitive);
+                let forwarded_addr = get_export_forwarded(ohp, case_sensitive);
+                if forwarded_addr == 0 {
+                    return addr;
+                }
+                return forwarded_addr;
             }
             return addr;
         }
@@ -205,11 +209,14 @@ pub unsafe fn get_export_forwarded(ohp: OffsetHashPair, case_sensitive: bool) ->
     };
     let mut entry: *mut LDR_DATA_TABLE_ENTRY = ldr_data_entry_fl();
     let end: *mut LDR_DATA_TABLE_ENTRY = ldr_data_entry_bl();
+    let mut forward_checked: bool = false;
+    let mut forward_checked_module_hash: u32 = 0;
     while entry != end {
         module_name = (*entry).BaseDllName;
         module_name.Length -= 8;
-        if hashes.module_hash == 0
-            || hash::hash_us(&module_name, get_offset(ohp), case_sensitive) == hashes.module_hash
+        let entry_module_hash = hash::hash_us(&module_name, get_offset(ohp), case_sensitive);
+        if (hashes.module_hash == 0 || entry_module_hash == hashes.module_hash)
+            || (entry_module_hash != 0 && entry_module_hash != forward_checked_module_hash)
         {
             let base: u64 = (*entry).DllBase as _;
             if is_ied_valid(base) {
@@ -221,7 +228,12 @@ pub unsafe fn get_export_forwarded(ohp: OffsetHashPair, case_sensitive: bool) ->
                     let entry_hash: u32 = hash::hash(name_slice, get_offset(ohp), case_sensitive);
                     if entry_hash == hashes.function_hash {
                         let addr: u64 = get_export_addr(base, index as _);
+                        if !forward_checked {
+                            forward_checked_module_hash =
+                                hash::hash_us(&module_name, get_offset(ohp), case_sensitive);
+                        }
                         if is_forwarded(base, addr) {
+                            forward_checked = true;
                             hashes = hash::hash_forwarded(
                                 addr as *const u8,
                                 get_offset(ohp),
