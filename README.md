@@ -10,6 +10,11 @@ Rust implementation of [lazy_importer](https://github.com/JustasMasiulis/lazy_im
 
 # Usage
 
+```toml
+razy-importer        = "0.3.2"
+razy-importer-macros = "0.3.1"
+```
+
 Function prototype must be explicitly declared on the variable and this is by Rust design that Rust does not allow constants to be used where known type information is needed at compile time.
 
 Since the implementation of the `ri_fn` macro takes `func_type` as an `Expr` type, this is treated as an expression that is resolved at runtime. However, types such as `extern "system" fn()`, which represents a function pointer, require known type information at compile time. Therefore, the type `Expr`, which is resolved at runtime, cannot be used directly as such a function type.
