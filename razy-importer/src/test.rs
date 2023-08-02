@@ -19,8 +19,7 @@ speculate! {
             }
             let hash: OffsetHashPair = crate::hash::khash(
                 value.as_bytes(),
-                crate::hash::khash_impl(&random_array, random_u32, false),
-                false,
+                crate::hash::khash_impl(&random_array, random_u32),
             );
             return hash;
         }
@@ -38,11 +37,11 @@ speculate! {
         fn check(dll_name: &str, func_name: &str) {
             unsafe {
                 let (dll_base, func_addr) = check_ex(dll_name, func_name);
-                let base = crate::get_module_base(gen_ohp(dll_name), false);
+                let base = crate::get_module_base(gen_ohp(dll_name));
                 assert_eq_hex!(base, dll_base);
-                let addr = crate::get_export(base, gen_ohp(func_name), false);
+                let addr = crate::get_export(base, gen_ohp(func_name));
                 assert_eq_hex!(addr, func_addr);
-                let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
+                let addr = crate::get_export_forwarded(gen_ohp(func_name));
                 assert_eq_hex!(addr, func_addr);
             };
         }
@@ -50,17 +49,46 @@ speculate! {
         fn check_single(dll_name: &str, func_name: &str) {
             unsafe {
                 let (dll_base, func_addr) = check_ex(dll_name, func_name);
-                let base = crate::get_module_base(gen_ohp(dll_name), false);
+                let base = crate::get_module_base(gen_ohp(dll_name));
                 assert_eq_hex!(base, dll_base);
-                let addr = crate::get_export(base, gen_ohp(func_name), false);
+                let addr = crate::get_export(base, gen_ohp(func_name));
                 assert_eq_hex!(addr, func_addr);
             };
         }
 
         fn check_forward(func_name: &str) {
             unsafe {
-                let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
+                let addr = crate::get_export_forwarded(gen_ohp(func_name));
                 assert_ne_hex!(addr, 0);
+            }
+        }
+
+        #[allow(dead_code)]
+        fn check_should_zero(dll_name: &str, func_name: &str) {
+            unsafe {
+                let base = crate::get_module_base(gen_ohp(dll_name));
+                assert_ne_hex!(base, 0);
+                let addr = crate::get_export(base, gen_ohp(func_name));
+                assert_eq_hex!(addr, 0);
+                let addr = crate::get_export_forwarded(gen_ohp(func_name));
+                assert_eq_hex!(addr, 0);
+            };
+        }
+
+        #[allow(dead_code)]
+        fn check_mod(dll_name: &str) {
+            unsafe {
+                let (dll_base, _) = check_ex(dll_name, "");
+                let base = crate::get_module_base(gen_ohp(dll_name));
+                assert_eq_hex!(base, dll_base);
+            }
+        }
+
+        #[allow(dead_code)]
+        fn check_mod_should_zero(dll_name: &str) {
+            unsafe {
+                let base = crate::get_module_base(gen_ohp(dll_name));
+                assert_eq_hex!(base, 0);
             }
         }
 
@@ -71,6 +99,7 @@ speculate! {
             assert_ne!(handle, 0);
         }
 
+        #[cfg(not(feature = "case-sensitive"))]
         it "check ntdll" {
             // non-forwarded
             check("ntdll.dll", "NtGetCurrentProcessorNumber");
@@ -91,6 +120,22 @@ speculate! {
             check("ntdll.dll", "ZwOpenThreadTokenEx");
         }
 
+        #[cfg(feature = "case-sensitive")]
+        it "check case-sensitive" {
+            check_mod("ntdll.dll");
+            check_mod_should_zero("NtDlL.DLl");
+            check("ntdll.dll", "ZwOpenThreadTokenEx");
+            check_should_zero("ntdll.dll", "ZwOpEnThrEadTokeNex");
+            check_forward("ZwOpenThreadTokenEx");
+            // kernel32.dll always uppercase.
+            check_mod("KERNEL32.DLL");
+            check_mod_should_zero("KerNEl32.DLl");
+            check("KERNEL32.DLL", "GetCurrentProcess");
+            check_should_zero("KERNEL32.DLL", "GetCurRentProcEss");
+            check_forward("GetCurrentProcess");
+        }
+
+        #[cfg(not(feature = "case-sensitive"))]
         it "check_forward ntdll" {
             check_forward("NtGetCurrentProcessorNumber");
             check_forward("NtGetCurrentProcessorNumberEx");
@@ -110,6 +155,7 @@ speculate! {
             check_forward("ZwOpenThreadTokenEx");
         }
 
+        #[cfg(not(feature = "case-sensitive"))]
         it "check kernel32" {
             // includes forwarded hashes
             check("kernel32.dll", "OpenProcess");
@@ -124,6 +170,7 @@ speculate! {
             check("kernel32.dll", "GetCurrentApplicationUserModelId");
         }
 
+        #[cfg(not(feature = "case-sensitive"))]
         it "check_forward kernel32" {
             check_forward("OpenProcess");
             check_forward("OpenThread");
@@ -137,6 +184,7 @@ speculate! {
             check_forward("GetCurrentApplicationUserModelId");
         }
 
+        #[cfg(not(feature = "case-sensitive"))]
         it "check for cyclic forwarded imports" {
             // load_lib("api-ms-win-core-processthreads-l1-1-1.dll");
             check("kernel32.dll", "SetProcessMitigationPolicy");
@@ -147,9 +195,9 @@ speculate! {
         it "check should not throw" {
             unsafe {
                 let dll_name: &str = "ntdll.dll";
-                let base = crate::get_module_base(gen_ohp(dll_name), false);
+                let base = crate::get_module_base(gen_ohp(dll_name));
                 let func_name: &str = "NonExistentAPINameShouldNotThrowException";
-                let addr = crate::get_export(base, gen_ohp(func_name), false);
+                let addr = crate::get_export(base, gen_ohp(func_name));
                 assert_eq_hex!(addr, 0);
                 // This throws exception, as intended.
                 // let addr = crate::get_export(0, gen_ohp(func_name), false);
@@ -160,7 +208,7 @@ speculate! {
         it "check_forward should not throw" {
             unsafe {
                 let func_name: &str = "NonExistentAPINameShouldNotThrowException";
-                let addr = crate::get_export_forwarded(gen_ohp(func_name), false);
+                let addr = crate::get_export_forwarded(gen_ohp(func_name));
                 assert_eq_hex!(addr, 0);
             }
         }

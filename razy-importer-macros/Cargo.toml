@@ -1,7 +1,7 @@
 [package]
 name        = "razy-importer-macros"
 description = "Proc macros for razy-importer"
-version     = "0.2.0"
+version     = "0.3.0"
 readme      = "../README.MD"
 edition     = { workspace = true }
 license     = { workspace = true }
@@ -21,6 +21,10 @@ const-random  = "0.1.15"
 syn           = { version = "1.0.91", features = ["full", "extra-traits"] }
 quote         = "1.0.17"
 razy-importer = { version = "*", path = "../razy-importer" }
+
+[features]
+default        = []
+case-sensitive = ["razy-importer/case-sensitive"]
 
 [[example]]
 name = "general-purpose"

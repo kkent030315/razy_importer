@@ -28,6 +28,17 @@ fn main() {
 }
 ```
 
+## Case Sensitivity
+
+The crates `razy-importer` and `razy-importer-macros` has `case-sensitive` and which is set by default. A letter case will be ignored because Windows will not consider whether or not the letter is uppercase or lowercase.
+
+In case you need to use strict case-sensitive check, disable the feature.
+
+```toml
+razy-importer = { version = "...", default_feature = false }
+razy-importer-macros = { version = "...", default_feature = false }
+```
+
 # API Set DLLs is supported
 
 API Set DLLs is supported (such as `SetProcessMitigationPolicy`) since `>=0.2.0`.

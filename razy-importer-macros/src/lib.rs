@@ -44,8 +44,7 @@ pub fn ri_khash(input: TokenStream) -> TokenStream {
     };
     let hash: OffsetHashPair = razy_importer::hash::khash(
         s.value().as_bytes(),
-        razy_importer::hash::khash_impl(&random_array, random_u32, false),
-        false,
+        razy_importer::hash::khash_impl(&random_array, random_u32),
     );
     let expanded: TokenStream = quote! {
         #hash
@@ -62,7 +61,6 @@ pub fn ri_mod(input: TokenStream) -> TokenStream {
         unsafe {
             razy_importer::get_module_base(
                 ri_khash!(#module_name_str),
-                false,
             )
         }
     }
@@ -97,7 +95,6 @@ pub fn ri_fn_m(input: TokenStream) -> TokenStream {
             std::mem::transmute(razy_importer::get_export(
                 #module_expr,
                 ri_khash!(#function),
-                false,
             ))
         }
     }
@@ -113,7 +110,6 @@ pub fn ri_fn(input: TokenStream) -> TokenStream {
         unsafe {
             std::mem::transmute(razy_importer::get_export_forwarded(
                 ri_khash!(#function_name_str),
-                false,
             ))
         }
     }

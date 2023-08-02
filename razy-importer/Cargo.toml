@@ -1,7 +1,7 @@
 [package]
 name        = "razy-importer"
 description = "Rust implementation of lazy_importer"
-version     = "0.2.0"
+version     = "0.3.0"
 readme      = "../README.MD"
 edition     = { workspace = true }
 license     = { workspace = true }
@@ -18,3 +18,7 @@ winapi       = { version = "0.3", features = ["libloaderapi"] }
 [dependencies]
 ntapi      = "0.4.1"
 mem_macros = "1.0.1"
+
+[features]
+default        = []
+case-sensitive = []
