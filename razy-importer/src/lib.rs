@@ -176,25 +176,7 @@ pub unsafe fn get_export(base: u64, ohp: OffsetHashPair) -> u64 {
     if !is_ied_valid(base) {
         return 0;
     }
-    let export_count: u32 = get_export_count(base);
-    for index in 0..export_count {
-        let name: *const u8 = get_export_name(base, index as _);
-        let name_len: usize = strlen(name);
-        let name_slice: &[u8] = core::slice::from_raw_parts(name, name_len);
-        let entry_hash: u32 = hash::hash(name_slice, get_offset(ohp));
-        if entry_hash == get_hash(ohp) {
-            let addr: u64 = get_export_addr(base, index as _);
-            if is_forwarded(base, addr) {
-                let forwarded_addr = get_export_forwarded(ohp);
-                if forwarded_addr == 0 {
-                    return addr;
-                }
-                return forwarded_addr;
-            }
-            return addr;
-        }
-    }
-    return 0;
+    return get_export_forwarded(ohp);
 }
 
 #[inline(always)]

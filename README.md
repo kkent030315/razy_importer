@@ -68,161 +68,206 @@ fn nt() -> u32 {
 ```cpp
 __int64 nt()
 {
-  PPEB_LDR_DATA Ldr; // rcx
-  struct _LIST_ENTRY *Flink; // r9
-  struct _LIST_ENTRY *Blink; // r14
-  int v3; // r8d
-  int v4; // edx
-  struct _LIST_ENTRY *v5; // r11
-  struct _LIST_ENTRY *v6; // r10
-  int v7; // esi
-  unsigned __int8 v8; // bl
-  struct _LIST_ENTRY *v9; // r11
-  __int64 Blink_high; // rsi
-  __int64 v11; // r10
-  __int64 v12; // rdi
-  unsigned int *v13; // r10
-  __int64 v14; // r14
-  __int64 v15; // rbx
-  char *v16; // r14
-  __int64 v17; // r12
-  __int64 v18; // r15
-  int v19; // ebp
-  __int64 v20; // r12
-  char v21; // r13
-  unsigned __int8 v22; // al
-  __int64 (*v23)(void); // r9
-  unsigned __int8 *v24; // r8
-  unsigned __int8 *v25; // r9
-  int v26; // r10d
-  unsigned __int8 v27; // al
-  unsigned __int8 v28; // r10
-  unsigned __int8 v29; // al
+  PPEB_LDR_DATA Ldr; // rax
+  struct _LIST_ENTRY *Flink; // r8
+  struct _LIST_ENTRY *Blink; // rsi
+  int v3; // r10d
+  int v4; // r12d
+  int v5; // r9d
+  struct _LIST_ENTRY *v6; // rbx
+  struct _LIST_ENTRY *v7; // rdi
+  int v8; // eax
+  struct _LIST_ENTRY *v9; // rcx
+  unsigned __int8 v10; // r11
+  struct _LIST_ENTRY *v11; // r15
+  __int64 Blink_high; // rax
+  __int64 v13; // r14
+  __int64 v14; // rdx
+  unsigned int *v15; // r14
+  __int64 v16; // rax
+  __int64 v17; // r13
+  char *v18; // rbp
+  __int64 v19; // rcx
+  __int64 v20; // rax
+  int v21; // r11d
+  __int64 v22; // rcx
+  char v23; // r12
+  unsigned __int8 v24; // r8
+  __int64 (*v25)(void); // rdx
+  unsigned __int8 v26; // cl
+  char *v27; // rax
+  char *v28; // rdx
+  int v29; // ecx
+  unsigned __int8 v30; // r8
+  unsigned __int8 v31; // cl
+  unsigned __int8 v32; // al
+  unsigned __int8 v33; // cl
+  unsigned __int8 v34; // r8
+  unsigned __int8 v35; // al
+  int v37; // [rsp+4h] [rbp-64h]
+  struct _LIST_ENTRY *v38; // [rsp+8h] [rbp-60h]
+  char v39; // [rsp+10h] [rbp-58h]
+  struct _LIST_ENTRY *v40; // [rsp+20h] [rbp-48h]
 
   Ldr = NtCurrentPeb()->Ldr;
   Flink = Ldr->InLoadOrderModuleList.Flink;
   Blink = Ldr->InLoadOrderModuleList.Blink;
   if ( Flink != Blink )
   {
-    v3 = -490794436;
+    v3 = -42511511;
+    v39 = 0;
     v4 = 0;
+    v5 = 0;
+    v38 = Ldr->InLoadOrderModuleList.Blink;
     do
     {
-      if ( !v4 )
-        goto LABEL_44;
-      v5 = Flink[6].Flink;
-      v6 = (struct _LIST_ENTRY *)((char *)v5 + ((unsigned __int16)(LODWORD(Flink[5].Blink) - 8) & 0xFFFE));
-      v7 = -1246732848;
-      while ( v5 < v6 )
+      v6 = Flink[6].Flink;
+      v7 = (struct _LIST_ENTRY *)((char *)v6 + ((unsigned __int16)(LODWORD(Flink[5].Blink) - 8) & 0xFFFE));
+      v8 = 218083195;
+      if ( v6 < v7 )
       {
-        v8 = LOBYTE(v5->Flink) | 0x20;
-        if ( (unsigned __int8)(LOBYTE(v5->Flink) - 65) >= 0x1Au )
-          v8 = (unsigned __int8)v5->Flink;
-        v7 = 16777619 * (v7 ^ v8);
-        v5 = (struct _LIST_ENTRY *)((char *)v5 + 2);
-      }
-      if ( v7 == v4 )
-      {
-LABEL_44:
-        v9 = Flink[3].Flink;
-        Blink_high = SHIDWORD(v9[3].Blink);
-        v11 = *(unsigned int *)((char *)&v9[8].Blink + Blink_high);
-        if ( *(_DWORD *)((char *)&v9[8].Blink + Blink_high) )
+        v9 = Flink[6].Flink;
+        do
         {
-          v12 = *(unsigned int *)((char *)&v9[1].Blink + v11);
-          v13 = (unsigned int *)((char *)v9 + v11);
-          v14 = 0i64;
+          v10 = LOBYTE(v9->Flink) | 0x20;
+          if ( (unsigned __int8)(LOBYTE(v9->Flink) - 65) >= 0x1Au )
+            v10 = (unsigned __int8)v9->Flink;
+          v8 = 16777619 * (v8 ^ v10);
+          v9 = (struct _LIST_ENTRY *)((char *)v9 + 2);
+        }
+        while ( v9 < v7 );
+      }
+      if ( !v5 || v8 == v5 || v8 && v8 != v4 )
+      {
+        v11 = Flink[3].Flink;
+        Blink_high = SHIDWORD(v11[3].Blink);
+        v13 = *(unsigned int *)((char *)&v11[8].Blink + Blink_high);
+        if ( *(_DWORD *)((char *)&v11[8].Blink + Blink_high) )
+        {
+          v40 = Flink;
+          v37 = v4;
+          v14 = *(unsigned int *)((char *)&v11[1].Blink + v13);
+          v15 = (unsigned int *)((char *)v11 + v13);
+          v16 = 0i64;
           do
           {
-            if ( v14 == v12 )
+            if ( v16 == v14 )
             {
-              Blink = Ldr->InLoadOrderModuleList.Blink;
-              goto LABEL_39;
+              Blink = v38;
+              v4 = v37;
+              Flink = v40;
+              goto LABEL_49;
             }
-            v15 = v14;
-            v16 = (char *)v9 + *(unsigned int *)((char *)&v9->Flink + 4 * v14 + v13[8]);
-            v17 = 0i64;
+            v17 = v16;
+            v18 = (char *)v11 + *(unsigned int *)((char *)&v11->Flink + 4 * v16 + v15[8]);
+            v19 = 0i64;
             do
-              v18 = v17++;
-            while ( v16[v18] );
-            v19 = -1246732848;
-            if ( v17 != 1 )
+              v20 = v19++;
+            while ( v18[v20] );
+            v21 = 218083195;
+            if ( v19 != 1 )
             {
-              v20 = 0i64;
+              v22 = 0i64;
               do
               {
-                v21 = v16[v20];
-                if ( !v21 )
+                v23 = v18[v22];
+                if ( !v23 )
                   break;
-                v22 = v21 | 0x20;
-                if ( (unsigned __int8)(v21 - 65) >= 0x1Au )
-                  v22 = v16[v20];
-                v19 = 16777619 * (v22 ^ v19);
-                ++v20;
+                v24 = v23 | 0x20;
+                if ( (unsigned __int8)(v23 - 65) >= 0x1Au )
+                  v24 = v18[v22];
+                v21 = 16777619 * (v24 ^ v21);
+                ++v22;
               }
-              while ( v18 != v20 );
+              while ( v20 != v22 );
             }
-            v14 = v15 + 1;
+            v16 = v17 + 1;
           }
-          while ( v19 != v3 );
-          v23 = (__int64 (*)(void))((char *)v9
-                                  + *(unsigned int *)((char *)&v9->Flink
+          while ( v21 != v3 );
+          v25 = (__int64 (*)(void))((char *)v11
+                                  + *(unsigned int *)((char *)&v11->Flink
                                                     + 4
-                                                    * *(unsigned __int16 *)((char *)&v9->Flink
-                                                                          + 2 * (unsigned int)v15
-                                                                          + v13[9])
-                                                    + v13[7]));
-          if ( v13 >= (unsigned int *)v23
-            || (char *)v13 + *(unsigned int *)((char *)&v9[8].Blink + Blink_high + 4) <= (char *)v23 )
+                                                    * *(unsigned __int16 *)((char *)&v11->Flink
+                                                                          + 2 * (unsigned int)v17
+                                                                          + v15[9])
+                                                    + v15[7]));
+          v4 = v37;
+          if ( (v39 & 1) != 0 )
           {
-            return v23();
+            Blink = v38;
           }
-          v24 = (unsigned __int8 *)v23 + 1;
-          v25 = (unsigned __int8 *)v23 + 2;
-          v4 = -1246732848;
-          Blink = Ldr->InLoadOrderModuleList.Blink;
+          else
+          {
+            v4 = 218083195;
+            Blink = v38;
+            if ( v6 < v7 )
+            {
+              v4 = 218083195;
+              do
+              {
+                v26 = LOBYTE(v6->Flink) | 0x20;
+                if ( (unsigned __int8)(LOBYTE(v6->Flink) - 65) >= 0x1Au )
+                  v26 = (unsigned __int8)v6->Flink;
+                v4 = 16777619 * (v4 ^ v26);
+                v6 = (struct _LIST_ENTRY *)((char *)v6 + 2);
+              }
+              while ( v6 < v7 );
+            }
+          }
+          if ( v15 >= (unsigned int *)v25
+            || (char *)v15 + *(unsigned int *)((char *)&v11[8].Blink + SHIDWORD(v11[3].Blink) + 4) <= (char *)v25 )
+          {
+            return v25();
+          }
+          v27 = (char *)v25 + 1;
+          v28 = (char *)v25 + 2;
+          v5 = 218083195;
           while ( 1 )
           {
-            v26 = *(v24 - 1);
-            if ( !*(v24 - 1) )
-              goto LABEL_37;
-            if ( v26 == 46 )
+            v29 = (unsigned __int8)*(v27 - 1);
+            if ( !*(v27 - 1) )
+              goto LABEL_47;
+            if ( v29 == 46 )
               break;
-            v27 = v26 | 0x20;
-            if ( (unsigned __int8)(v26 - 65) >= 0x1Au )
-              v27 = *(v24 - 1);
-            v4 = 16777619 * (v27 ^ v4);
-            ++v24;
-            ++v25;
+            v30 = v29 - 65;
+            v31 = v29 | 0x20;
+            if ( v30 >= 0x1Au )
+              v31 = *(v27 - 1);
+            v5 = 16777619 * (v31 ^ v5);
+            ++v27;
+            ++v28;
           }
-          v28 = *v24;
-          if ( !*v24 )
+          v32 = *v27;
+          if ( !v32 )
           {
-LABEL_37:
-            v3 = -1246732848;
-            goto LABEL_38;
+LABEL_47:
+            v3 = 218083195;
+            goto LABEL_48;
           }
-          v3 = -1246732848;
+          v3 = 218083195;
           do
           {
-            v29 = v28 | 0x20;
-            if ( (unsigned __int8)(v28 - 65) >= 0x1Au )
-              v29 = v28;
-            v3 = 16777619 * (v3 ^ v29);
-            v28 = *v25++;
+            v33 = v32 - 65;
+            v34 = v32;
+            v35 = v32 | 0x20;
+            if ( v33 >= 0x1Au )
+              v35 = v34;
+            v3 = 16777619 * (v3 ^ v35);
+            v32 = *v28++;
           }
-          while ( v28 );
-LABEL_38:
+          while ( v32 );
+LABEL_48:
           Flink = NtCurrentPeb()->Ldr->InLoadOrderModuleList.Flink;
+          v39 = 1;
         }
       }
-LABEL_39:
+LABEL_49:
       Flink = Flink->Flink;
     }
     while ( Flink != Blink );
   }
-  v23 = 0i64;
-  return v23();
+  v25 = 0i64;
+  return v25();
 }
 ```
 
