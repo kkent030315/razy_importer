@@ -132,6 +132,7 @@ jobs:
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           custom_tag: '${{ steps.version_r.outputs.releaseVersion }}'
+          tag_prefix: ''
 
       - name: tag action
         if: ${{ inputs.publish_razy_importer_macros }}
@@ -140,6 +141,7 @@ jobs:
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           custom_tag: '${{ steps.version_rm.outputs.releaseVersion }}'
+          tag_prefix: ''
 
       - name: push tag
         run: git push origin --tags
