@@ -7,7 +7,6 @@ mod test;
 #[macro_use]
 extern crate mem_macros;
 
-#[cfg(test)]
 #[macro_use]
 extern crate const_random;
 

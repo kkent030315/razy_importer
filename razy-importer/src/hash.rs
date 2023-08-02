@@ -17,7 +17,7 @@ fn hash_single(value: u32, c: u8) -> u32 {
     } else {
         c as u32
     };
-    return value.bitxor(mask).wrapping_mul(16777619);
+    return value.bitxor(mask).wrapping_mul(const_random!(u32));
 }
 
 #[inline(always)]
