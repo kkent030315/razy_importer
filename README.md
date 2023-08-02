@@ -40,7 +40,7 @@ The crates `razy-importer` and `razy-importer-macros` has `case-sensitive` and w
 In case you need to use strict case-sensitive check, disable the feature.
 
 ```toml
-razy-importer = { version = "...", default_feature = false }
+razy-importer        = { version = "...", default_feature = false }
 razy-importer-macros = { version = "...", default_feature = false }
 ```
 
