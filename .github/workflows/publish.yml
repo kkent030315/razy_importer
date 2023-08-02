@@ -150,8 +150,8 @@ jobs:
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
+          token: '${{ github.token }}'
+          tag: '${{ steps.version_r.outputs.releaseVersion }}'
           writeToFile: false
           includeInvalidCommits: true
 
