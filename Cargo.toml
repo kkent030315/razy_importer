@@ -1,5 +1,6 @@
 [workspace]
-members = ["razy-importer", "razy-importer-macros", "razy-test"]
+members  = ["razy-importer", "razy-importer-macros", "razy-test"]
+resolver = "2"
 
 [workspace.package]
 authors    = ["Kento Oki <hrn832@protonmail.com>"]
