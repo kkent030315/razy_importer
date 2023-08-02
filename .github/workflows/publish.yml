@@ -146,13 +146,22 @@ jobs:
       - name: push tag
         run: git push origin --tags
 
+      - name: generate changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
+          writeToFile: false
+          includeInvalidCommits: true
+
       - name: create release
         if: ${{ inputs.publish_razy_importer }}
         id: release_r
         uses: softprops/action-gh-release@v1
         with:
           body: |
-            ${{ steps.tag_r.outputs.changelog }}
+            ${{ steps.changelog.outputs.changelog }}
 
             <details>
             <summary>Cargo Audit</summary>
@@ -181,7 +190,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: |
-            ${{ steps.tag_rm.outputs.changelog }}
+            ${{ steps.changelog.outputs.changelog }}
 
             <details>
             <summary>Cargo Audit</summary>
