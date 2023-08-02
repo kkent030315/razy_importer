@@ -20,7 +20,7 @@ proc-macro2   = "1.0.36"
 const-random  = "0.1.15"
 syn           = { version = "1.0.91", features = ["full", "extra-traits"] }
 quote         = "1.0.17"
-razy-importer = { version = "0.1.0", path = "../razy-importer" }
+razy-importer = { version = "*", path = "../razy-importer" }
 
 [[example]]
 name = "general-purpose"
