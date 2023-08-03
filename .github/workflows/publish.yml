@@ -147,6 +147,7 @@ jobs:
         run: git push origin --tags
 
       - name: generate changelog
+        if: false
         id: changelog
         uses: requarks/changelog-action@v1
         with:
