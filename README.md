@@ -11,8 +11,8 @@ Rust implementation of [lazy_importer](https://github.com/JustasMasiulis/lazy_im
 # Usage
 
 ```toml
-razy-importer        = "0.3.2"
-razy-importer-macros = "0.3.1"
+razy-importer        = "0.3.4"
+razy-importer-macros = "0.3.3"
 ```
 
 Function prototype must be explicitly declared on the variable and this is by Rust design that Rust does not allow constants to be used where known type information is needed at compile time.

@@ -1,6 +1,6 @@
 use core::ops::{BitOr, BitXor};
 
-use ntapi::winapi::shared::ntdef::UNICODE_STRING;
+use winapi::shared::ntdef::UNICODE_STRING;
 
 use crate::OffsetHashPair;
 

@@ -3,7 +3,7 @@
 #[macro_use]
 extern crate razy_importer_macros;
 
-use ntapi::winapi::shared::minwindef::ULONG;
+use winapi::shared::minwindef::ULONG;
 use winapi::shared::minwindef::DWORD;
 
 #[inline(never)]
