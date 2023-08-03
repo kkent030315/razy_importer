@@ -88,7 +88,7 @@ jobs:
         with:
           command: 'cargo publish --token ${{ secrets.CRATES_TOKEN }} -p razy-importer'
 
-      - name: publish razy-importer
+      - name: publish razy-importer-macros
         if: ${{ inputs.publish_razy_importer_macros }}
         uses: gh640/command-result-action@v1
         id: cargo_publish_rm
